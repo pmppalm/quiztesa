@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<header)>
+    <style>
+        .button {
+            background-color: #4CAF50;
+            /* Green */
+            border: none;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+        }
+        
+        .buttonCircle {
+            border-radius: 50%;
+        }
+    </style>
+    </header>
+
+    <body>
+        <center>
+            <button class="button buttonCircle" onclick="sendLocation()">send location</button>
+        </center>
+
+
+        <script>
+            var x = document.getElementById("demo");
+
+            function sendLocation() {
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(send2firebase);
+                } else {
+                    x.innerHTML = "Geolocation is not supported by this browser.";
+                }
+            }
+
+            function send2firebase(position) {
+                var xhr = new XMLHttpRequest();
+
+                // const url = https://tgr2020-quiz.firebaseio.com/quiz/location/team28.json
+
+                const url = "https://tesa2020canet.firebaseio.com/quiz/location/team28.json";
+                xhr.open("POST", url, true);
+                xhr.setRequestHeader("Content-Type", "application/json");
+                xhr.onreadystatechange = function() {
+                    if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+                        console.log("Response: " + xhr.responseText);
+                        var json = JSON.parse(xhr.responseText);
+                    }
+                };
+
+                var currentTime = new Date();
+
+                currentTime.setUTCHours(currentTime.getUTCHours() + 7)
+
+                var data = JSON.stringify({
+                    "team": 28,
+                    "latitude": position.coords.latitude,
+                    "longitude": position.coords.longitude,
+                    "timestamp": currentTime.toISOString()
+                });
+                xhr.send(data);
+                alert("Sending Successed!!!");
+            }
+        </script>
+
+    </body>
+
+</html>
